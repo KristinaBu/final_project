@@ -19,9 +19,6 @@ set(SOURCE_FILES main.cpp)
 ]]
 
 
-
-
-
 #cmake_minimum_required(VERSION 3.24)
 cmake_minimum_required(VERSION 3.23.2)
 
@@ -34,15 +31,27 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 #add modules
 
-add_executable(cpp_part main.cpp ray_casting.cpp map.cpp map.h global_const.h Objects.h Objects.cpp Player.cpp Player.h LineObject.h LineObject.h Wall.h Wall.h Point.h Point.h)
-#add_subdirectory(Object_lib)
+add_executable(
+        cpp_part
+        main.cpp
+        map.h
+        global_const.h
+        Player.h
+        objects/Objects.h
+        objects/LineObject.h
+        objects/Wall.h
+        objects/Point.h)
+# add_subdirectory(objects)
+target_include_directories(cpp_part PRIVATE objects)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/kotokrolik.jpg
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 target_link_libraries(cpp_part PRIVATE sfml-graphics)
 target_compile_features(cpp_part PRIVATE cxx_std_17)
 if (WIN32 AND BUILD_SHARED_LIBS)
     add_custom_command(TARGET cpp_part POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:cpp_part> $<TARGET_FILE_DIR:cpp_part> COMMAND_EXPAND_LISTS)
-endif()
+endif ()
 
 install(TARGETS cpp_part)
 
