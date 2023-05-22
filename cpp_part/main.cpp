@@ -5,11 +5,12 @@
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "map.h"
-#include "Objects.h"
+#include "objects/Objects.h"
 #include "Player.h"
-#include "math.h"
+#include <cmath>
 
 #include "global_const.h"
+
 using namespace sf;
 using namespace std;
 
@@ -20,12 +21,12 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X*3, WINDOW_SIZE_Y*3), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X * 3, WINDOW_SIZE_Y * 3), "SFML works!");
 
     Clock main_time;
 
     sf::RectangleShape rectangle(sf::Vector2f(120.f, 50.f));
-    Player p(WINDOW_SIZE_X/2, WINDOW_SIZE_Y/2);
+    Player p(WINDOW_SIZE_X / 2, WINDOW_SIZE_Y / 2);
     //длина 15 высота 10
     /*{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -48,17 +49,15 @@ int main() {
                                          {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},*/
 
     Map map1(vector<vector<int>>({
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                                         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    }));
+                                         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                                         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                                 }));
     CircleShape c; // drawing centerpoint
     c.setRadius(2);
     c.setFillColor(Color::Red);
@@ -72,23 +71,22 @@ int main() {
         sf::Event event{};
         window.clear();
         //направление взгляда
-        sf::Vertex line[] ={
+        sf::Vertex line[] = {
                 sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000*cos(p.get_direction()),
-                                        p.get_y() + 1000*sin(p.get_direction())))
+                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction()),
+                                        p.get_y() + 1000 * sin(p.get_direction())))
         };
         // ты сосиска бебебе
-        sf::Vertex line_left[] ={
+        sf::Vertex line_left[] = {
                 sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000*cos(p.get_direction() - PI/4),
-                                        p.get_y() + 1000*sin(p.get_direction() - PI/4)))
+                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction() - PI / 4),
+                                        p.get_y() + 1000 * sin(p.get_direction() - PI / 4)))
         };
-        sf::Vertex line_right[] ={
+        sf::Vertex line_right[] = {
                 sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000*cos(p.get_direction() + PI/4),
-                                        p.get_y() + 1000*sin(p.get_direction() + PI/4)))
+                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction() + PI / 4),
+                                        p.get_y() + 1000 * sin(p.get_direction() + PI / 4)))
         };
-
 
 
         while (window.pollEvent(event)) {
@@ -98,15 +96,16 @@ int main() {
                 (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
                 window.close();
 
-            if(event.type == sf::Event::KeyPressed){
+            if (event.type == sf::Event::KeyPressed) {
                 p.set_key(event.key.code, true);
 
             }
-            if(event.type == sf::Event::KeyReleased){
+            if (event.type == sf::Event::KeyReleased) {
                 p.set_key(event.key.code, false);
 
             }
         }
+        // ты козявочник
         map1.draw(window);
         p.go(main_time.getElapsedTime().asSeconds(), map1.get_objects_in_game());
         window.draw(p.getSprite());
