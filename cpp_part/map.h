@@ -1,39 +1,87 @@
 #ifndef CPP_PART_MAP_H
 #define CPP_PART_MAP_H
 
+
+#include <variant>
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "global_const.h"
 #include "string"
+#include "Objects.h"
+#include "Wall.h"
 
 using namespace sf;
 
-class Map_1{
+class Map{
+private:
+    std::vector<std::vector<int>> minimap;
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    std::vector<Object> objects_in_game;
 public:
-    static void draw_Map_1(sf::RenderWindow& i_window, sf::String minimap[MAP_y]){
-        sf::RectangleShape rectangle(sf::Vector2f(tile_size, tile_size));
+    //!!!!!!!!!!!!!!!!
+    std::vector<Object> get_objects_in_game(){
+        return objects_in_game;
+    }
+
+    Map(std::vector<std::vector<int>> minimap){
+        this->minimap = std::move(minimap);
 
         for(unsigned int y=0; y<MAP_y; y++){
-            for(unsigned int x=0; x < minimap[y].getSize() ; x++){
-                rectangle.setPosition(x*tile_size, y*tile_size);
-
-                switch (minimap[y][x]) {
-                    case '1':
-                    {
-                        rectangle.setFillColor(sf::Color(30,30,200));
-                        i_window.draw(rectangle);
-                        minimap[y][x] = Tiles_map::Wall;
-                    }
-                    case ' ':
-                    {
-                        minimap[y][x] = Tiles_map::Empty;
-                    }
+            for(unsigned int x=0; x < this->minimap[y].size() ; x++){
+                if (this->minimap[y][x] == 1){
+                    class Wall wall1(x*tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size),
+                            wall2(x*tile_size+tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size+tile_size),
+                            wall3(x*tile_size, y*tile_size,x*tile_size, y*tile_size+tile_size),
+                            wall4(x*tile_size, y*tile_size+tile_size,x*tile_size+tile_size, y*tile_size+tile_size);
+                    Object obj;
+                    obj.set(x*tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size,Wall_);
+                    objects_in_game.push_back(obj);
+                    obj.set(x*tile_size+tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size+tile_size, Wall_);
+                    objects_in_game.push_back(obj);
+                    obj.set(x*tile_size+tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size+tile_size,Wall_);
+                    objects_in_game.push_back(obj);
+                    obj.set(x*tile_size+tile_size, y*tile_size,x*tile_size+tile_size, y*tile_size+tile_size,Wall_);
+                    objects_in_game.push_back(obj);
+                    /*objects_in_game.push_back(wall1);
+                    objects_in_game.push_back(wall2);
+                    objects_in_game.push_back(wall3);
+                    objects_in_game.push_back(wall4);*/
+                    this->minimap[y][x] = Tiles_map::Wall;
+                }
+                else if (this->minimap[y][x] == 0){
+                    this->minimap[y][x] = Tiles_map::Empty;
                 }
             }
         }
     }
+
+    void draw(sf::RenderWindow& i_window){
+        //sf::RectangleShape rectangle(sf::Vector2f(tile_size, tile_size));
+        for(unsigned int y=0; y<MAP_y; y++){
+            for(unsigned int x=0; x < minimap[y].size() ; x++){
+                //rectangle.setPosition(x*tile_size, y*tile_size);
+                if (minimap[y][x] == 1){
+                    sf::VertexArray draw_walls(sf::Quads, 4);
+
+                    draw_walls[0].position = sf::Vector2f(x*tile_size, y*tile_size);
+                    draw_walls[1].position = sf::Vector2f(x*tile_size+tile_size, y*tile_size);
+                    draw_walls[2].position = sf::Vector2f(x*tile_size+tile_size, y*tile_size+tile_size);
+                    draw_walls[3].position = sf::Vector2f(x*tile_size, y*tile_size+tile_size);
+                    i_window.draw(draw_walls);
+                    /*rectangle.setFillColor(sf::Color(220,30,200));
+                    i_window.draw(rectangle);*/
+                }
+                else if (minimap[y][x] == 0){
+                    minimap[y][x] = Tiles_map::Empty;
+                }
+
+            }
+        }
+    }
+
 };
 
+/*
 
 class new_map{
 public:
@@ -190,5 +238,6 @@ public:
 
 };
 
+*/
 
 #endif //CPP_PART_MAP_H

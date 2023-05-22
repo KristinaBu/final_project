@@ -8,19 +8,22 @@
 constexpr float PI = 3.141592653589793116f;
 
 //плитка карты 16 пикселей
-constexpr unsigned int tile_size = 16;
+constexpr unsigned int tile_size = 32;
 
-constexpr unsigned int MAP_x = 10;
+constexpr unsigned int MAP_x = 15;
 constexpr unsigned int MAP_y = 10;
 constexpr unsigned int WINDOW_SIZE_X = MAP_x*tile_size;
 constexpr unsigned int WINDOW_SIZE_Y = MAP_y*tile_size;
-constexpr unsigned int PLAYER_SPEED = 400;
+constexpr unsigned int PLAYER_SPEED = tile_size;
+constexpr double PLAYER_ROTATE_SPEED = PI/4;
+
 
 
 //для карты
 //эхх
 enum Tiles_map{
-    Empty, Wall
+    Empty,
+    Wall
 };
 
 

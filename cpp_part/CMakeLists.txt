@@ -34,7 +34,7 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 #add modules
 
-add_executable(cpp_part main.cpp ray_casting.cpp map.cpp map.h global_const.h Objects.h Objects.cpp)
+add_executable(cpp_part main.cpp ray_casting.cpp map.cpp map.h global_const.h Objects.h Objects.cpp Player.cpp Player.h LineObject.h LineObject.h Wall.h Wall.h Point.h Point.h)
 #add_subdirectory(Object_lib)
 
 target_link_libraries(cpp_part PRIVATE sfml-graphics)
