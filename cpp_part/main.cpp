@@ -73,7 +73,7 @@ int main() {
         }
         p.go(dt, map1.get_objects_in_game());
 
-        map1.draw(window);
+        // map1.draw(window);
         p.draw_minimap(window, map1);
 
         window.display();

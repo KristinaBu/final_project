@@ -99,11 +99,17 @@ public:
     }
 
     void draw_minimap(sf::RenderWindow &i_window, Map map){
+        sf::Sprite sky;
+        Texture texture;
+        texture.loadFromFile("assets/kotokrolik.jpg");
+        sky.setTexture(texture);
+        sky.setTextureRect(IntRect(0, 0, WINDOW_SIZE_X, WINDOW_SIZE_Y / 2));
         CircleShape c; // drawing centerpoint
         c.setRadius(4);
         c.setFillColor(Color::Red);
         c.setOrigin(4, 4);
         c.setPosition(x, y);
+        i_window.draw(sky);
         i_window.draw(c);
 
         int pixelCounter = -1;
@@ -129,12 +135,12 @@ public:
                     contextIntersect = intersect;
                 }
             }
-            dist += 6;
-            // dist *= cos(direction-angle);
-            int h = (int) (PLAYER_FOV * WINDOW_SIZE_X / dist);
+            //dist += 6;
+            dist *= cos(direction-angle);
+            int h = min((int) (PLAYER_FOV * WINDOW_SIZE_X / dist), (int) WINDOW_SIZE_Y / 2);
             sf::Vertex line[] = {
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue)
             };
             sf::Vertex shadowline[] = {
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255)),
@@ -146,7 +152,7 @@ public:
             };
             i_window.draw(line, 2, sf::Lines);
             i_window.draw(shadowline, 2, sf::Lines);
-            i_window.draw(minimapLine, 2, sf::Lines);
+            // i_window.draw(minimapLine, 2, sf::Lines);
         }
 
     }

@@ -8,7 +8,7 @@
 constexpr float PI = 3.141592653589793116f;
 
 //плитка карты
-constexpr unsigned int tile_size = 32;
+constexpr unsigned int tile_size = 16;
 constexpr unsigned int pixelResolution = 1;
 constexpr unsigned int WINDOW_SIZE_X = 1280;
 constexpr unsigned int WINDOW_SIZE_Y = 720;
