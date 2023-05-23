@@ -174,6 +174,7 @@ public:
         c.setPosition(x, y);
         i_window.draw(c);
 
+
         int pixelCounter = -1;
         for(
                 float angle = direction - PLAYER_FOV / 2;
