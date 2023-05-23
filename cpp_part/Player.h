@@ -110,9 +110,9 @@ public:
         for(
                 float angle = direction - PLAYER_FOV / 2;
                 angle <= direction + PLAYER_FOV / 2;
-                angle += PLAYER_FOV / (float)WINDOW_SIZE_X
+                angle += PLAYER_FOV / (float)WINDOW_SIZE_X * pixelResolution
         ){
-            pixelCounter++;
+            pixelCounter+=pixelResolution;
             // Ищем ближайшую для рендера стену
             Wall* contextObj = nullptr;
             Point* intersect = nullptr;
@@ -129,15 +129,16 @@ public:
                     contextIntersect = intersect;
                 }
             }
-            dist *= cos(direction-angle);
+            dist += 6;
+            // dist *= cos(direction-angle);
             int h = (int) (PLAYER_FOV * WINDOW_SIZE_X / dist);
             sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
             };
             sf::Vertex shadowline[] = {
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255))
             };
             sf::Vertex minimapLine[] = {
                     sf::Vertex(sf::Vector2f(x, y), Color::Green),
