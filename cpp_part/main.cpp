@@ -14,7 +14,6 @@
 using namespace sf;
 using namespace std;
 
-
 int main() {
 
     //сглаживание неровных и диагональных линий
