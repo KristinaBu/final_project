@@ -23,6 +23,8 @@ private:
     float direction = 0;
     float rotate_speed = PLAYER_ROTATE_SPEED;
     std::map<sf::Keyboard::Key, bool> key_state;
+    Image image_wall;
+    vector<Texture> precompiledWallTexture;
 public:
     float get_x() const { return this->x; }
 
@@ -47,6 +49,13 @@ public:
         key_state[sf::Keyboard::A] = false;
         key_state[sf::Keyboard::S] = false;
         key_state[sf::Keyboard::D] = false;
+        image_wall.loadFromFile(R"(assets\Marble.png)");
+
+        for (int i = 0; i < image_wall.getSize().x; i++){
+            Texture t;
+            t.loadFromImage(image_wall, sf::IntRect(i, 0, pixelResolution, image_wall.getSize().y));
+            precompiledWallTexture.push_back(t);
+        }
     }
 
     Sprite getSprite() {
@@ -158,14 +167,9 @@ public:
     }
 
     void draw_texture_(sf::RenderWindow &i_window, Map map){
-
-        Image image_wall;
         Texture texture_line;
         Sprite line_sprite;
-        image_wall.loadFromFile(R"(assets\kotokrolik.jpg)");
 
-
-        //p_sprite.setTexture(p_texture);
 
         CircleShape c; // drawing centerpoint
         c.setRadius(4);
@@ -201,21 +205,19 @@ public:
                     dist = sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2));
                     contextObj = wall;
                     contextIntersect = intersect;
-                    proportion_intersection = func_dict(wall->get_x1(), wall->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
-                            / func_dict(wall->get_x1(), wall->get_x2(), wall->get_y1(), wall->get_y2());
-                    proportion_texture_x = image_wall.getSize().x * proportion_intersection;
-                    ///???????????????????????/
-                    texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, 1, image_wall.getSize().y));
                 }
             }
-            line_sprite.setTexture(texture_line);
 
-            //dist += 6;
             dist *= cos(direction-angle);
             int h = min((int) (PLAYER_FOV * WINDOW_SIZE_X / dist), (int) WINDOW_SIZE_Y/2);
-            line_sprite.setTexture(texture_line);
-            line_sprite.setScale(1,h / (float) p_texture.getSize().y);
-            line_sprite.setOrigin((float) texture_line.getSize().x / 2, (float) texture_line.getSize().y / 2);
+            proportion_intersection = func_dict(contextObj->get_x1(), contextObj->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
+                                      / func_dict(contextObj->get_x1(), contextObj->get_y1(), contextObj->get_x2(),  contextObj->get_y2());
+            proportion_texture_x = image_wall.getSize().x * proportion_intersection;
+            //texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, pixelResolution, image_wall.getSize().y));
+            //line_sprite.setTexture(texture_line);
+            line_sprite.setTexture(precompiledWallTexture.at(proportion_texture_x-1));
+            line_sprite.setScale(1, 4*h / (float) p_texture.getSize().y);
+            line_sprite.setOrigin((float) precompiledWallTexture.at(proportion_texture_x-1).getSize().x / 2, (float) precompiledWallTexture.at(proportion_texture_x-1).getSize().y / 2);
             line_sprite.setPosition(pixelCounter,WINDOW_SIZE_Y/2);
 
             sf::Vertex line[] = {
@@ -223,17 +225,17 @@ public:
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
             };
             sf::Vertex shadowline[] = {
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255)),
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255))
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color(1,1,1, (dist > FOG_LEVEL ? 1 - FOG_LEVEL / dist : 0) * 255)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color(1,1,1, (dist > FOG_LEVEL ? 1 - FOG_LEVEL / dist : 0) * 255))
             };
             sf::Vertex minimapLine[] = {
                     sf::Vertex(sf::Vector2f(x, y), Color::Green),
                     sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
             };
             i_window.draw(line, 2, sf::Lines);
+            i_window.draw(line_sprite);
             i_window.draw(shadowline, 2, sf::Lines);
             i_window.draw(minimapLine, 2, sf::Lines);
-            i_window.draw(line_sprite);
         }
 
     }
