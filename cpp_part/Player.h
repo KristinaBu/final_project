@@ -61,7 +61,7 @@ public:
 
 
 //!!!!!!!!!!!!!!!!!!
-    void go(float d_time, const std::vector<Object *> &objects_in_game) {
+    void go(double d_time, const std::vector<Object *> &objects_in_game) {
         // d_time *= 100; //магия
 
         if (key_state[sf::Keyboard::W])
@@ -106,11 +106,13 @@ public:
         c.setPosition(x, y);
         i_window.draw(c);
 
+        int pixelCounter = -1;
         for(
                 float angle = direction - PLAYER_FOV / 2;
                 angle <= direction + PLAYER_FOV / 2;
                 angle += PLAYER_FOV / (float)WINDOW_SIZE_X
         ){
+            pixelCounter++;
             // Ищем ближайшую для рендера стену
             Wall* contextObj = nullptr;
             Point* intersect = nullptr;
@@ -127,11 +129,17 @@ public:
                     contextIntersect = intersect;
                 }
             }
+            int h = (int) (PLAYER_FOV * WINDOW_SIZE_X / dist);
             sf::Vertex line[] = {
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue)
+            };
+            sf::Vertex minimapLine[] = {
                     sf::Vertex(sf::Vector2f(x, y), Color::Green),
                     sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
             };
             i_window.draw(line, 2, sf::Lines);
+            i_window.draw(minimapLine, 2, sf::Lines);
         }
 
     }
