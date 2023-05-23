@@ -7,20 +7,17 @@
 //constexpr - значения константных выражений, которые могут быть вычислены во время компиляции кода
 constexpr float PI = 3.141592653589793116f;
 
-//плитка карты 16 пикселей
+//плитка карты
 constexpr unsigned int tile_size = 32;
 
-constexpr unsigned int MAP_x = 15;
-constexpr unsigned int MAP_y = 8;
-constexpr unsigned int WINDOW_SIZE_X = MAP_x * tile_size;
-constexpr unsigned int WINDOW_SIZE_Y = MAP_y * tile_size;
-constexpr unsigned int PLAYER_SPEED = tile_size * 1000;
-constexpr float PLAYER_ROTATE_SPEED = PI / 4 * 1000;
+constexpr unsigned int WINDOW_SIZE_X = 1280;
+constexpr unsigned int WINDOW_SIZE_Y = 720;
+constexpr unsigned int PLAYER_SPEED = tile_size;
+constexpr float PLAYER_ROTATE_SPEED = PI / 4;
 constexpr float PLAYER_FOV = PI / 2;
+constexpr float FOG_LEVEL = 200;
 
 
-//для карты
-//эхх
 enum Tiles_map {
     Empty,
     WallTile

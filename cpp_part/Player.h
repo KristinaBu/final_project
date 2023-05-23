@@ -121,7 +121,7 @@ public:
             for (Object* obj: map.get_objects_in_game()){
                 if (obj->get_type() != WallType) continue;
                 Wall* wall = reinterpret_cast<Wall *>(obj);
-                intersect = Wall::intersection(x, y, x + 10000 * cos(angle), y + 10000 * sin(angle),
+                intersect = Wall::intersection(x, y, x + 100000 * cos(angle), y + 100000 * sin(angle),
                                                wall->get_x1(), wall->get_y1(), wall->get_x2(), wall->get_y2());
                 if (intersect != nullptr && sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2)) < dist){
                     dist = sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2));
@@ -129,16 +129,22 @@ public:
                     contextIntersect = intersect;
                 }
             }
+            dist *= cos(direction-angle);
             int h = (int) (PLAYER_FOV * WINDOW_SIZE_X / dist);
             sf::Vertex line[] = {
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),
-                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue)
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
+            };
+            sf::Vertex shadowline[] = {
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
             };
             sf::Vertex minimapLine[] = {
                     sf::Vertex(sf::Vector2f(x, y), Color::Green),
                     sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
             };
             i_window.draw(line, 2, sf::Lines);
+            i_window.draw(shadowline, 2, sf::Lines);
             i_window.draw(minimapLine, 2, sf::Lines);
         }
 

@@ -7,7 +7,7 @@
 #include "map.h"
 #include "objects/Objects.h"
 #include "Player.h"
-#include <cmath>
+#include <chrono>
 
 #include "global_const.h"
 
@@ -21,12 +21,12 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X * 3, WINDOW_SIZE_Y * 3), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), "SFML works!");
 
     Clock main_time;
 
     sf::RectangleShape rectangle(sf::Vector2f(120.f, 50.f));
-    Player p(WINDOW_SIZE_X / 2, WINDOW_SIZE_Y / 2);
+    Player p(tile_size * 2, tile_size * 2);
     Map map1(vector<vector<int>>({
                                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
@@ -45,7 +45,13 @@ int main() {
 
     window.setKeyRepeatEnabled(false);
 
+    auto last_time = std::chrono::system_clock::now();
+
     while (window.isOpen()) {
+        auto dt = (std::chrono::system_clock::now() - last_time).count() / 1000000000.;
+        last_time = std::chrono::system_clock::now();
+        cout << dt << endl;
+
         sf::Event event{};
         window.clear();
 
@@ -65,7 +71,7 @@ int main() {
 
             }
         }
-        p.go(main_time.getElapsedTime().asSeconds(), map1.get_objects_in_game());
+        p.go(dt, map1.get_objects_in_game());
 
         map1.draw(window);
         p.draw_minimap(window, map1);
