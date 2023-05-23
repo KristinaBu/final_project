@@ -14,7 +14,7 @@ constexpr unsigned int WINDOW_SIZE_X = 1280;
 constexpr unsigned int WINDOW_SIZE_Y = 720;
 constexpr unsigned int PLAYER_SPEED = tile_size;
 constexpr float PLAYER_ROTATE_SPEED = PI / 4;
-constexpr float PLAYER_FOV = PI / 4;
+constexpr float PLAYER_FOV = PI / 2;
 constexpr float FOG_LEVEL = 10;
 
 
