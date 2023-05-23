@@ -213,6 +213,7 @@ public:
             proportion_intersection = func_dict(contextObj->get_x1(), contextObj->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
                                       / func_dict(contextObj->get_x1(), contextObj->get_y1(), contextObj->get_x2(),  contextObj->get_y2());
             proportion_texture_x = image_wall.getSize().x * proportion_intersection;
+
             //texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, pixelResolution, image_wall.getSize().y));
             //line_sprite.setTexture(texture_line);
             line_sprite.setTexture(precompiledWallTexture.at(proportion_texture_x-1));
