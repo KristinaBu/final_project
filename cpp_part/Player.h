@@ -110,12 +110,14 @@ public:
         for(
                 float angle = direction - PLAYER_FOV / 2;
                 angle <= direction + PLAYER_FOV / 2;
-                angle += PLAYER_FOV / (float)WINDOW_SIZE_X * pixelResolution
-        ){
+                angle += PLAYER_FOV / (float)WINDOW_SIZE_X * pixelResolution ){
+
             pixelCounter+=pixelResolution;
             // Ищем ближайшую для рендера стену
             Wall* contextObj = nullptr;
+            //течка пересечения
             Point* intersect = nullptr;
+            //полученная точка пересечения
             Point* contextIntersect = nullptr;
             float dist = 1000000000.0;
             for (Object* obj: map.get_objects_in_game()){
@@ -129,9 +131,9 @@ public:
                     contextIntersect = intersect;
                 }
             }
-            dist += 6;
-            // dist *= cos(direction-angle);
-            int h = (int) (PLAYER_FOV * WINDOW_SIZE_X / dist);
+            //dist += 6;
+            dist *= cos(direction-angle);
+            int h = min((int) (PLAYER_FOV * WINDOW_SIZE_X / dist), (int) WINDOW_SIZE_Y/2);
             sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
@@ -147,6 +149,90 @@ public:
             i_window.draw(line, 2, sf::Lines);
             i_window.draw(shadowline, 2, sf::Lines);
             i_window.draw(minimapLine, 2, sf::Lines);
+        }
+
+    }
+
+    float func_dict(float x, float y, float xx, float yy){
+        return  sqrt(pow(x - xx,2) + pow(y - yy, 2));
+    }
+
+    void draw_texture_(sf::RenderWindow &i_window, Map map){
+
+        Image image_wall;
+        Texture texture_line;
+        Sprite line_sprite;
+        image_wall.loadFromFile(R"(assets\kotokrolik.jpg)");
+
+
+        //p_sprite.setTexture(p_texture);
+
+        CircleShape c; // drawing centerpoint
+        c.setRadius(4);
+        c.setFillColor(Color::Red);
+        c.setOrigin(4, 4);
+        c.setPosition(x, y);
+        i_window.draw(c);
+
+        int pixelCounter = -1;
+        for(
+                float angle = direction - PLAYER_FOV / 2;
+                angle <= direction + PLAYER_FOV / 2;
+                angle += PLAYER_FOV / (float)WINDOW_SIZE_X * pixelResolution ){
+
+            pixelCounter+=pixelResolution;
+            // Ищем ближайшую для рендера стену
+            Wall* contextObj = nullptr;
+            //течка пересечения
+            Point* intersect = nullptr;
+            //полученная точка пересечения
+            Point* contextIntersect = nullptr;
+            float proportion_intersection = 0;
+            float proportion_texture_x = 0;
+
+            float dist = 1000000000.0;
+            for (Object* obj: map.get_objects_in_game()){
+                if (obj->get_type() != WallType) continue;
+                Wall* wall = reinterpret_cast<Wall *>(obj);
+                intersect = Wall::intersection(x, y, x + 100000 * cos(angle), y + 100000 * sin(angle),
+                                               wall->get_x1(), wall->get_y1(), wall->get_x2(), wall->get_y2());
+                if (intersect != nullptr && sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2)) < dist){
+                    dist = sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2));
+                    contextObj = wall;
+                    contextIntersect = intersect;
+                    proportion_intersection = func_dict(wall->get_x1(), wall->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
+                            / func_dict(wall->get_x1(), wall->get_x2(), wall->get_y1(), wall->get_y2());
+                    proportion_texture_x = image_wall.getSize().x * proportion_intersection;
+                    ///???????????????????????/
+                    texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, 1, image_wall.getSize().y));
+                }
+            }
+            line_sprite.setTexture(texture_line);
+
+            //dist += 6;
+            dist *= cos(direction-angle);
+            int h = min((int) (PLAYER_FOV * WINDOW_SIZE_X / dist), (int) WINDOW_SIZE_Y/2);
+            line_sprite.setTexture(texture_line);
+            line_sprite.setScale(1,h / (float) p_texture.getSize().y);
+            line_sprite.setOrigin((float) texture_line.getSize().x / 2, (float) texture_line.getSize().y / 2);
+            line_sprite.setPosition(pixelCounter,WINDOW_SIZE_Y/2);
+
+            sf::Vertex line[] = {
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
+            };
+            sf::Vertex shadowline[] = {
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255)),
+                    sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color((dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, (dist > FOG_LEVEL ? FOG_LEVEL / dist : 1) * 255, 255))
+            };
+            sf::Vertex minimapLine[] = {
+                    sf::Vertex(sf::Vector2f(x, y), Color::Green),
+                    sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
+            };
+            i_window.draw(line, 2, sf::Lines);
+            i_window.draw(shadowline, 2, sf::Lines);
+            i_window.draw(minimapLine, 2, sf::Lines);
+            i_window.draw(line_sprite);
         }
 
     }

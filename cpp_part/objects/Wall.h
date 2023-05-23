@@ -14,9 +14,23 @@ public:
     }
 
     Wall(float x1_, float y1_, float x2_, float y2_) {
-        this->x1 = x1_;
+        if(x1_ <= x2_){
+            this->x1 = x1_;
+            this->x2 = x2_;
+        }
+        else{
+            this->x1 = x2_;
+            this->x2 = x1_;
+        }
+        if(y1_ <= y2_){
+            this->y1 = y1_;
+            this->y2 = y2_;
+        }
+        else{
+            this->y1 = y2_;
+            this->y2 = y1_;
+        }
         this->y1 = y1_;
-        this->x2 = x2_;
         this->y2 = y2_;
         this->set_type(WallType);
     }
