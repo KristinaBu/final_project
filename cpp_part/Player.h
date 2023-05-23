@@ -20,7 +20,7 @@ private:
     Texture p_texture;
     Sprite p_sprite;
     // радианы
-    double direction = 0;
+    float direction = 0;
     float rotate_speed = PLAYER_ROTATE_SPEED;
     std::map<sf::Keyboard::Key, bool> key_state;
 public:
@@ -62,7 +62,7 @@ public:
 
 //!!!!!!!!!!!!!!!!!!
     void go(float d_time, const std::vector<Object *> &objects_in_game) {
-        d_time *= 100; //магия
+        // d_time *= 100; //магия
 
         if (key_state[sf::Keyboard::W])
             move((float) (x + speed * d_time * cos(direction)),
@@ -96,6 +96,44 @@ public:
         this->p_sprite.setPosition(X, Y);
         this->x = X;
         this->y = Y;
+    }
+
+    void draw_minimap(sf::RenderWindow &i_window, Map map){
+        CircleShape c; // drawing centerpoint
+        c.setRadius(4);
+        c.setFillColor(Color::Red);
+        c.setOrigin(4, 4);
+        c.setPosition(x, y);
+        i_window.draw(c);
+
+        for(
+                float angle = direction - PLAYER_FOV / 2;
+                angle <= direction + PLAYER_FOV / 2;
+                angle += PLAYER_FOV / (float)WINDOW_SIZE_X
+        ){
+            // Ищем ближайшую для рендера стену
+            Wall* contextObj = nullptr;
+            Point* intersect = nullptr;
+            Point* contextIntersect = nullptr;
+            float dist = 1000000000.0;
+            for (Object* obj: map.get_objects_in_game()){
+                if (obj->get_type() != WallType) continue;
+                Wall* wall = reinterpret_cast<Wall *>(obj);
+                intersect = Wall::intersection(x, y, x + 10000 * cos(angle), y + 10000 * sin(angle),
+                                               wall->get_x1(), wall->get_y1(), wall->get_x2(), wall->get_y2());
+                if (intersect != nullptr && sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2)) < dist){
+                    dist = sqrt(pow(x - intersect->get_x(), 2) + pow(y - intersect->get_y(), 2));
+                    contextObj = wall;
+                    contextIntersect = intersect;
+                }
+            }
+            sf::Vertex line[] = {
+                    sf::Vertex(sf::Vector2f(x, y), Color::Green),
+                    sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
+            };
+            i_window.draw(line, 2, sf::Lines);
+        }
+
     }
 };
 

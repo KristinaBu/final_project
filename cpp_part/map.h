@@ -14,7 +14,7 @@ using namespace sf;
 
 class Map {
 private:
-    std::vector<std::vector<int>> minimap;
+    std::vector<std::vector<int>> map_tiles;
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     std::vector<Object *> objects_in_game;
 public:
@@ -24,11 +24,11 @@ public:
     }
 
     explicit Map(std::vector<std::vector<int>> minimap) {
-        this->minimap = std::move(minimap);
+        this->map_tiles = std::move(minimap);
 
-        for (unsigned int y = 0; y < MAP_y; y++) {
-            for (unsigned int x = 0; x < this->minimap[y].size(); x++) {
-                if (this->minimap[y][x] == 1) {
+        for (unsigned int y = 0; y < this->map_tiles.size(); y++) {
+            for (unsigned int x = 0; x < this->map_tiles[y].size(); x++) {
+                if (this->map_tiles[y][x] == 1) {
                     objects_in_game.push_back(
                             new Wall((float) x * tile_size, (float) y * tile_size, (float) x * tile_size + tile_size,
                                      (float) y * tile_size));
@@ -41,18 +41,18 @@ public:
                     objects_in_game.push_back(new Wall((float) x * tile_size, (float) y * tile_size + tile_size,
                                                        (float) x * tile_size + tile_size,
                                                        (float) y * tile_size + tile_size));
-                    this->minimap[y][x] = Tiles_map::WallTile;
-                } else if (this->minimap[y][x] == 0) {
-                    this->minimap[y][x] = Tiles_map::Empty;
+                    this->map_tiles[y][x] = Tiles_map::WallTile;
+                } else if (this->map_tiles[y][x] == 0) {
+                    this->map_tiles[y][x] = Tiles_map::Empty;
                 }
             }
         }
     }
 
     void draw(sf::RenderWindow &i_window) {
-        for (unsigned int y = 0; y < MAP_y; y++) {
-            for (unsigned int x = 0; x < minimap[y].size(); x++) {
-                if (minimap[y][x] == 1) {
+        for (unsigned int y = 0; y < map_tiles.size(); y++) {
+            for (unsigned int x = 0; x < map_tiles[y].size(); x++) {
+                if (map_tiles[y][x] == 1) {
                     sf::VertexArray draw_walls(sf::Quads, 4);
                     draw_walls[0].position = sf::Vector2f((float) x * tile_size, (float) y * tile_size);
                     draw_walls[1].position = sf::Vector2f((float) x * tile_size + tile_size, (float) y * tile_size);
@@ -60,10 +60,9 @@ public:
                                                           (float) y * tile_size + tile_size);
                     draw_walls[3].position = sf::Vector2f((float) x * tile_size, (float) y * tile_size + tile_size);
                     i_window.draw(draw_walls);
-                } else if (minimap[y][x] == 0) {
-                    minimap[y][x] = Tiles_map::Empty;
+                } else if (map_tiles[y][x] == 0) {
+                    map_tiles[y][x] = Tiles_map::Empty;
                 }
-
             }
         }
     }

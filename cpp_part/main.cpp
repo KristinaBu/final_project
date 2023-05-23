@@ -27,29 +27,8 @@ int main() {
 
     sf::RectangleShape rectangle(sf::Vector2f(120.f, 50.f));
     Player p(WINDOW_SIZE_X / 2, WINDOW_SIZE_Y / 2);
-    //длина 15 высота 10
-    /*{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},,*/
-    /*{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-                                         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,1,0,0,0,0,1,0,0,0,0,0,1},
-                                         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},*/
-
     Map map1(vector<vector<int>>({
-                                         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                                         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
@@ -57,10 +36,9 @@ int main() {
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
                                          {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
                                          {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                                         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                                  }));
-    CircleShape c; // drawing centerpoint
-    c.setRadius(2);
-    c.setFillColor(Color::Red);
+
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
     std::vector<Object> objects_in_game;
@@ -70,24 +48,6 @@ int main() {
     while (window.isOpen()) {
         sf::Event event{};
         window.clear();
-        //направление взгляда
-        sf::Vertex line[] = {
-                sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction()),
-                                        p.get_y() + 1000 * sin(p.get_direction())))
-        };
-        // ты сосиска бебебе
-        sf::Vertex line_left[] = {
-                sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction() - PI / 4),
-                                        p.get_y() + 1000 * sin(p.get_direction() - PI / 4)))
-        };
-        sf::Vertex line_right[] = {
-                sf::Vertex(sf::Vector2f(p.get_x(), p.get_y())),
-                sf::Vertex(sf::Vector2f(p.get_x() + 1000 * cos(p.get_direction() + PI / 4),
-                                        p.get_y() + 1000 * sin(p.get_direction() + PI / 4)))
-        };
-
 
         while (window.pollEvent(event)) {
 
@@ -105,16 +65,10 @@ int main() {
 
             }
         }
-        // ты козявочник
-        map1.draw(window);
         p.go(main_time.getElapsedTime().asSeconds(), map1.get_objects_in_game());
-        window.draw(p.getSprite());
-        c.setPosition(p.getSprite().getPosition());
-        window.draw(c);
 
-        window.draw(line, 2, sf::Lines);
-        window.draw(line_left, 2, sf::Lines);
-        window.draw(line_right, 2, sf::Lines);
+        map1.draw(window);
+        p.draw_minimap(window, map1);
 
         window.display();
         main_time.restart(); //перезагружает время
