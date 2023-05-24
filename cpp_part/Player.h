@@ -213,12 +213,14 @@ public:
             proportion_intersection = func_dict(contextObj->get_x1(), contextObj->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
                                       / func_dict(contextObj->get_x1(), contextObj->get_y1(), contextObj->get_x2(),  contextObj->get_y2());
             proportion_texture_x = image_wall.getSize().x * proportion_intersection;
+
             //texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, pixelResolution, image_wall.getSize().y));
             //line_sprite.setTexture(texture_line);
             line_sprite.setTexture(precompiledWallTexture.at(proportion_texture_x-1));
             line_sprite.setScale(1, 4*h / (float) p_texture.getSize().y);
             line_sprite.setOrigin((float) precompiledWallTexture.at(proportion_texture_x-1).getSize().x / 2, (float) precompiledWallTexture.at(proportion_texture_x-1).getSize().y / 2);
             line_sprite.setPosition(pixelCounter,WINDOW_SIZE_Y/2);
+
 
             sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
