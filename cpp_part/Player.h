@@ -22,8 +22,10 @@ private:
     // радианы
     float direction = 0;
     float rotate_speed = PLAYER_ROTATE_SPEED;
+    //вектор нажатых кнопок
     std::map<sf::Keyboard::Key, bool> key_state;
     Image image_wall;
+    //прекомпиляция видимых стен
     vector<Texture> precompiledWallTexture;
 public:
     float get_x() const { return this->x; }
@@ -38,7 +40,7 @@ public:
         p_image.loadFromFile(R"(assets\kotokrolik.jpg)");
         p_texture.loadFromImage(p_image);
         p_sprite.setTexture(p_texture);
-
+        //данная формуза делает возможным загрузку изображения любого размера
         p_sprite.setScale((float) tile_size / (float) p_texture.getSize().x,
                           (float) tile_size / (float) p_texture.getSize().y);
 
@@ -51,6 +53,7 @@ public:
         key_state[sf::Keyboard::D] = false;
         image_wall.loadFromFile(R"(assets\Marble.png)");
 
+        //заранее загружаем в текстуру стены изображение
         for (int i = 0; i < image_wall.getSize().x; i++){
             Texture t;
             t.loadFromImage(image_wall, sf::IntRect(i, 0, pixelResolution, image_wall.getSize().y));
@@ -68,10 +71,8 @@ public:
 
     double get_direction() const { return this->direction; }
 
-
-//!!!!!!!!!!!!!!!!!!
+    //движение
     void go(double d_time, const std::vector<Object *> &objects_in_game) {
-        // d_time *= 100; //магия
 
         if (key_state[sf::Keyboard::W])
             move((float) (x + speed * d_time * cos(direction)),
@@ -86,9 +87,8 @@ public:
 
         this->p_sprite.setRotation((float) direction * 180 / PI);
     }
-
+    //коллизия
     void move(float X, float Y, const std::vector<Object *> &objects_in_game) {
-
         for (Object *obj: objects_in_game) {
             if (obj->get_type() == WallType) {
                 Wall *p_wall = reinterpret_cast<Wall *>(obj);
@@ -101,20 +101,19 @@ public:
                 }
             }
         }
-
         this->p_sprite.setPosition(X, Y);
         this->x = X;
         this->y = Y;
     }
-
+    //2д карта
     void draw_minimap(sf::RenderWindow &i_window, Map map){
-        CircleShape c; // drawing centerpoint
+        CircleShape c; // игрок
         c.setRadius(4);
         c.setFillColor(Color::Red);
         c.setOrigin(4, 4);
         c.setPosition(x, y);
         i_window.draw(c);
-
+        //райкастинг
         int pixelCounter = -1;
         for(
                 float angle = direction - PLAYER_FOV / 2;
@@ -140,7 +139,7 @@ public:
                     contextIntersect = intersect;
                 }
             }
-            //dist += 6;
+            //расстояние от игрока до пересечения взгляда и стены
             dist *= cos(direction-angle);
             int h = min((int) (PLAYER_FOV * WINDOW_SIZE_X / dist), (int) WINDOW_SIZE_Y/2);
             sf::Vertex line[] = {
@@ -170,14 +169,12 @@ public:
         Texture texture_line;
         Sprite line_sprite;
 
-
-        CircleShape c; // drawing centerpoint
+        CircleShape c;
         c.setRadius(4);
         c.setFillColor(Color::Red);
         c.setOrigin(4, 4);
         c.setPosition(x, y);
         i_window.draw(c);
-
 
         int pixelCounter = -1;
         for(
@@ -192,7 +189,9 @@ public:
             Point* intersect = nullptr;
             //полученная точка пересечения
             Point* contextIntersect = nullptr;
+            //коэффиценит пропорциональности отрезка стены с самой стеной
             float proportion_intersection = 0;
+            //точка пересечения взгляда и стены, пропорционально отложенная на координату Х изображения
             float proportion_texture_x = 0;
 
             float dist = 1000000000.0;
@@ -213,9 +212,7 @@ public:
             proportion_intersection = func_dict(contextObj->get_x1(), contextObj->get_y1(), contextIntersect->get_x(), contextIntersect->get_y())
                                       / func_dict(contextObj->get_x1(), contextObj->get_y1(), contextObj->get_x2(),  contextObj->get_y2());
             proportion_texture_x = image_wall.getSize().x * proportion_intersection;
-
-            //texture_line.loadFromImage(image_wall,sf::IntRect(proportion_texture_x, 0, pixelResolution, image_wall.getSize().y));
-            //line_sprite.setTexture(texture_line);
+            //прекомпиляция - заранее загрузить текстуру в вектор и уже потом выкладывать на экран
             line_sprite.setTexture(precompiledWallTexture.at(proportion_texture_x-1));
             line_sprite.setScale(1, 4*h / (float) p_texture.getSize().y);
             line_sprite.setOrigin((float) precompiledWallTexture.at(proportion_texture_x-1).getSize().x / 2, (float) precompiledWallTexture.at(proportion_texture_x-1).getSize().y / 2);

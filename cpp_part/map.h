@@ -15,7 +15,7 @@ using namespace sf;
 class Map {
 private:
     std::vector<std::vector<int>> map_tiles;
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //все игровые объекты
     std::vector<Object *> objects_in_game;
 public:
     //!!!!!!!!!!!!!!!!
