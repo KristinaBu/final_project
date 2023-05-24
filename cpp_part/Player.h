@@ -221,6 +221,7 @@ public:
             line_sprite.setOrigin((float) precompiledWallTexture.at(proportion_texture_x-1).getSize().x / 2, (float) precompiledWallTexture.at(proportion_texture_x-1).getSize().y / 2);
             line_sprite.setPosition(pixelCounter,WINDOW_SIZE_Y/2);
 
+
             sf::Vertex line[] = {
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2-h), Color::Blue),//Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1)),
                     sf::Vertex(sf::Vector2f(pixelCounter, WINDOW_SIZE_Y/2+h), Color::Blue) //Color(dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, dist > FOG_LEVEL ? FOG_LEVEL / dist : 1, 1))
