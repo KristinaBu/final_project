@@ -1,11 +1,11 @@
-#[[
-cmake_minimum_required(VERSION 3.24)
-project(cpp_part LANGUAGES CXX )
+#[
+#[[cmake_minimum_required(VERSION 3.24)
+project(final_project LANGUAGES CXX )
 
 set(CMAKE_CXX_STANDARD 23)
 
 
-add_executable(cpp_part main.cpp)
+add_executable(final_project main.cpp)
 
 set(SFML_DIR "E:\\Lib_SFML\\sfml\\SFML-2.5.1\\lib\\cmake\\SFML")
 
@@ -15,14 +15,14 @@ target_link_libraries(cpp_part sfml-graphics)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 find_package(SFML REQUIRED system window graphics network audio)
 
-set(SOURCE_FILES main.cpp)
-]]
+set(SOURCE_FILES main.cpp)]]
+
 
 
 #cmake_minimum_required(VERSION 3.24)
 cmake_minimum_required(VERSION 3.23.2)
 
-project(cpp_part LANGUAGES CXX)
+project(final_project LANGUAGES CXX)
 
 include(FetchContent)
 FetchContent_Declare(SFML
@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(SFML)
 #add modules
 
 add_executable(
-        cpp_part
+        final_project
         main.cpp
         map.h
         global_const.h
@@ -42,17 +42,19 @@ add_executable(
         objects/Wall.h
         objects/Point.h)
 # add_subdirectory(objects)
-target_include_directories(cpp_part PRIVATE objects)
+target_include_directories(final_project PRIVATE objects)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/kotokrolik.jpg
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/Marble.png
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/assets)
 
-target_link_libraries(cpp_part PRIVATE sfml-graphics)
-target_compile_features(cpp_part PRIVATE cxx_std_17)
+target_link_libraries(final_project PRIVATE sfml-graphics)
+target_compile_features(final_project PRIVATE cxx_std_17)
 if (WIN32 AND BUILD_SHARED_LIBS)
-    add_custom_command(TARGET cpp_part POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:cpp_part> $<TARGET_FILE_DIR:cpp_part> COMMAND_EXPAND_LISTS)
+    add_custom_command(TARGET final_project POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:final_project> $<TARGET_FILE_DIR:final_project> COMMAND_EXPAND_LISTS)
 endif ()
 
-install(TARGETS cpp_part)
+install(TARGETS final_project)
 
 #target_link_libraries(cpp_part PUBLIC Object_lib)

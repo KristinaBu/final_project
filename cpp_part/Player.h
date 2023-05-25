@@ -27,6 +27,8 @@ private:
     Image image_wall;
     //прекомпиляция видимых стен
     vector<Texture> precompiledWallTexture;
+
+
 public:
     float get_x() const { return this->x; }
 
@@ -231,6 +233,7 @@ public:
                     sf::Vertex(sf::Vector2f(x, y), Color::Green),
                     sf::Vertex(sf::Vector2f(contextIntersect->get_x(), contextIntersect->get_y()), Color::Blue)
             };
+
             i_window.draw(line, 2, sf::Lines);
             i_window.draw(line_sprite);
             i_window.draw(shadowline, 2, sf::Lines);
