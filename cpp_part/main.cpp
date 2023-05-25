@@ -20,7 +20,7 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), "Bublic");
 
     Clock main_time;
 
@@ -54,12 +54,12 @@ int main() {
                                          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                                  }));
 
-
     std::vector<Object> objects_in_game;
 
     window.setKeyRepeatEnabled(false);
 
     auto last_time = std::chrono::system_clock::now();
+
 
     while (window.isOpen()) {
         auto dt = (std::chrono::system_clock::now() - last_time).count() / 1000000000.;
