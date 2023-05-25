@@ -18,7 +18,6 @@ private:
     //все игровые объекты
     std::vector<Object *> objects_in_game;
 public:
-    //!!!!!!!!!!!!!!!!
     std::vector<Object *> get_objects_in_game() {
         return objects_in_game;
     }
