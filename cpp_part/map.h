@@ -21,7 +21,6 @@ public:
     std::vector<Object *> get_objects_in_game() {
         return objects_in_game;
     }
-
     explicit Map(std::vector<std::vector<int>> minimap) {
         this->map_tiles = std::move(minimap);
 
